@@ -1,0 +1,2 @@
+<%@ page language="java" contentType="application/json; charset=UTF-8" pageEncoding="UTF-8"%>
+[{"GUBUN":"20190115","AMOUNT":"5018823200","APPROVAL_CNT":"16337"},{"GUBUN":"20190702","AMOUNT":"2796897700","APPROVAL_CNT":"9130"},{"GUBUN":"20191210","AMOUNT":"3429768900","APPROVAL_CNT":"6977"}]
