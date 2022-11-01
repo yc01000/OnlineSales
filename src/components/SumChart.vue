@@ -26,8 +26,8 @@ export default {
             var myDataset = [];
             var myBackColor = ['rgba(91, 204, 0, 0.2)', 'rgba(6, 134, 255, 0.2)', 'rgba(255, 56, 49, 0.5)'];
             var myBorderColor = ['rgba(91, 204, 0, 1)', 'rgba(6, 134, 255, 1)', 'rgba(255, 56, 49, 1)'];
-            var idx = 0;
-            JSON.parse(this.sumdata).forEach(element => {
+
+            JSON.parse(this.sumdata).forEach((element,idx) => {
                 element.AMOUNT = (element.AMOUNT == null) ? "0" : Math.round(parseFloat(element.AMOUNT) / 1000000);
                 myDataset.push({
                     label: element.GUBUN,
@@ -37,7 +37,6 @@ export default {
                     borderColor: myBorderColor[idx],
                     borderWidth: 1
                 }); 
-                idx++;
             });
             console.log("myDataset > ", myDataset);
             var chartdata = {

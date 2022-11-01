@@ -1,164 +1,114 @@
 <template>
     <div>
-        <canvas ref="AmtChart" />
+        <canvas ref="AmtChart" style="display: block; height: 230px; width: 750px;" />
     </div>
 </template>
   
 <script>
-// import { Chart, registerables } from 'chart.js'
-// Chart.register(...registerables)
-
 const Chart = require('chart.js');
 
 export default {
     props: {
         amtdata: Object
     },
+
     data: () => ({
         type: 'line',
-        data: {
-            labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-            datasets: [{
-                label: '# of Votes',
-                data: [12, 19, 3, 5, 2, 3],
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(153, 102, 255, 0.2)',
-                    'rgba(255, 159, 64, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)'
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: false,
-            maintainAspectRatio: false,
-            hover: {
-                animationDuration: 0
-            },
-            animation: {
-                duration: 1,
-                onComplete: function () {
-                    var chartInstance = this.chart,
-                        ctx = chartInstance.ctx;
-
-                    ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, Chart.defaults.global.defaultFontStyle, Chart.defaults.global.defaultFontFamily);
-                    ctx.textAlign = 'center';
-                    ctx.textBaseline = 'bottom';
-
-                    // this.data.datasets.forEach(function (dataset, i) {
-                    //     var meta = chartInstance.controller.getDatasetMeta(i);
-                    //     ctx.fillStyle = myBorderColor[i]; // 라인에 텍스트 컬러..
-                    //     meta.data.forEach(function (bar, index) {
-                    //         if (document.getElementById("dataSeries1").checked) {
-                    //             var data = addComma(dataset.data[index]);
-                    //             ctx.fillText(data, bar._model.x, bar._model.y - 5);
-                    //         }
-                    //         else {
-                    //             ctx.fillText("", bar._model.x, bar._model.y - 5);
-                    //         }
-                    //     });
-                    // });
-                }
-            },
-            tooltips: {
-                enabled: true
-            },
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero: true,
-                        // callback: function (value, index, values) {
-                        //     return addComma(value);
-                        // }
-                    }
-                }]
-            },
-            legend: {
-                position: 'bottom'
-            },
-            title: {
-                display: true,
-                text: '판매 금액 추이(천원)',
-                position: 'top',
-                fontSize: 12,
-                fontStyle: 'bold'
-            },
-            spanGaps: true
-        }
+        myBorderColor: ['rgba(91, 204, 0, 1)', 'rgba(6, 134, 255, 1)', 'rgba(255, 56, 49, 1)'],
+        myBackColor: ['rgba(91, 204, 0, 0.2)', 'rgba(6, 134, 255, 0.2)', 'rgba(255, 56, 49, 0.5)'],
     }),
     mounted() {
         this.createChart()
     },
     methods: {
-        createChart() {
+        createChart: function() {
+            var minutesDataset = [];
+            var lableList = [];
+
+            JSON.parse(this.amtdata).forEach((element,idx) => {
+                var dataAmtList = [];
+                lableList = [];
+                element.PerMinutes.forEach(el => {
+                    el.AMOUNT = (el.AMOUNT == null) ? "0" : Math.round(parseFloat(el.AMOUNT) / 1000);
+                    dataAmtList.push(el.AMOUNT);
+                    lableList.push(el.GUBUN.split(' ')[1]); // 분단위
+                });
+                minutesDataset.push({
+                    label: element.PerMinutes[0].GUBUN.split(' ')[0], //날짜 3개
+                    data: dataAmtList,
+                    fill: false,
+                    linetension: 1,
+                    backgroundColor: this.myBackColor[idx],
+                    borderColor: this.myBorderColor[idx],
+                    borderWidth: 1
+                });
+            });
+
+            var myOptions = ({
+                responsive: false,
+                maintainAspectRatio: false,
+                hover: {
+                    animationDuration: 0
+                },
+                animation: {
+                    duration: 1,
+                    onComplete: function() {
+                        var chartInstance = this.chart,
+                            ctx = chartInstance.ctx;
+
+                        ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, Chart.defaults.global.defaultFontStyle, Chart.defaults.global.defaultFontFamily);
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'bottom';
+
+                        var myBorderColor= ['rgba(75, 192, 192, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 99, 132, 1)'];
+                        this.data.datasets.forEach(function(dataset, i) {
+                            var meta = chartInstance.controller.getDatasetMeta(i);
+                            ctx.fillStyle = myBorderColor[i]; // 라인에 텍스트 컬러..
+                            meta.data.forEach(function(bar, index) {
+                                var commadata = String(dataset.data[index]).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                                ctx.fillText(commadata, bar._model.x, bar._model.y - 5);
+                            });
+                        });
+                    }
+                },
+                tooltips: {
+                    enabled: true
+                },
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true,
+                            callback: function(value) {
+                                return String(value).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                            }
+                        }
+                    }]
+                },
+                legend: {
+                    position: 'bottom'
+                },
+                title: {
+                    display: false,
+                    text: '',
+                    position: 'top',
+                    fontSize: 12,
+                    fontStyle: 'bold'
+                },
+                spanGaps: true
+            });
+            var chartdata = {
+                labels: lableList,
+                datasets: minutesDataset
+            };
 
             new Chart(this.$refs.AmtChart, {
-                type: 'line',
-                data: this.data,
-                options: this.options
-            })
+                type: this.type,
+                data: chartdata,
+                options: myOptions
+            });
 
         }
     }
 }
 
-
-
-// var minutesDataset = [];
-//     var minutesCntDataset = [];
-//     var lableList = [];
-//     //var myBorderColor = ['rgba(75, 192, 192, 1)', 'rgba(54, 162, 235, 1', 'rgba(255, 99, 132, 1)'];
-//     //var myBackColor = ['rgba(75, 192, 192, 0.2)', 'rgba(54, 162, 235, 0.2', 'rgba(255, 99, 132, 0.2)'];
-//     var idx = 0;
-//     @foreach(var item in Model.PerMinutesModelList)
-//     {
-//         @:var dataAmtList = [];
-//         @:var dataCntList = [];
-//         @:lableList = [];
-//         foreach (var dataInput in item.PerMinutes)
-//         {
-//             dataInput.AMOUNT = (dataInput.AMOUNT==null)?"0":Math.Round(double.Parse(dataInput.AMOUNT) / 1000).ToString();
-//             @:dataAmtList.push("@dataInput.AMOUNT");
-//             @:dataCntList.push("@dataInput.APPROVAL_CNT");
-//             @:lableList.push("@dataInput.GUBUN.Split(' ')[1]");
-//         }
-
-//         @:minutesDataset.push({
-//         @:    label: "@item.PerMinutes[0].GUBUN.Split(' ')[0]"
-//         @:    , data: dataAmtList
-//         @:    , fill: false
-//         @:    , linetension: 1
-//         @:    , backgroundColor: myBackColor[idx]
-//         @:    , borderColor: myBorderColor[idx]
-//         @:    , borderWidth: 1
-//         @:});
-
-//         @:minutesCntDataset.push({
-//         @:    label: "@item.PerMinutes[0].GUBUN.Split(' ')[0]"
-//         @:    , data: dataCntList
-//         @:    , fill: false
-//         @:    , linetension: 0.1
-//         @:    , backgroundColor: myBackColor[idx]
-//         @:    , borderColor: myBorderColor[idx]
-//         @:    , bordercapstyle: 'butt'
-//         @:    , borderjoinstyle: 'miter'
-//         @:    , pointbordercolor: myBorderColor[idx]
-//         @:    , borderWidth: 1
-//         @:});
-//         @:idx++;
-//     }
-//     console.log(minutesDataset);
-
-//     console.log("returnModel: " + returnModel);
 </script>

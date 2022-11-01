@@ -20,12 +20,26 @@
             <!-- line chart -->
             <div class="row">
               <div class="card z-index-2">
-                <AmountChart v-bind:amtdata="this.per_jsondata" />
+                <div class="p-2 pb-0 card-header">
+                  <div class="d-flex justify-content-between">
+                    <h6 class="mb-1">판매 금액(천원)</h6>
+                  </div>
+                </div>
+                <div class="card-body bg-light">
+                  <AmountChart v-bind:amtdata="this.per_jsondata" />
+                </div>
               </div>
             </div>
-            <div class="row mt-4">
+            <div class="row mt-2">
               <div class="card z-index-2">
-                <CountChart />
+                <div class="p-2 pb-0 card-header">
+                  <div class="d-flex justify-content-between">
+                    <h6 class="mb-1">승인 건수</h6>
+                  </div>
+                </div>
+                <div class="card-body bg-light">
+                  <CountChart v-bind:cntdata="this.per_jsondata" />
+                </div>
               </div>
             </div>
           </div>
