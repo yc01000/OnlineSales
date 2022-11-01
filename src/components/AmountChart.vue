@@ -11,6 +11,9 @@
 const Chart = require('chart.js');
 
 export default {
+    props: {
+        amtdata: Object
+    },
     data: () => ({
         type: 'line',
         data: {
@@ -99,6 +102,7 @@ export default {
     },
     methods: {
         createChart() {
+
             new Chart(this.$refs.AmtChart, {
                 type: 'line',
                 data: this.data,
@@ -108,4 +112,53 @@ export default {
         }
     }
 }
+
+
+
+// var minutesDataset = [];
+//     var minutesCntDataset = [];
+//     var lableList = [];
+//     //var myBorderColor = ['rgba(75, 192, 192, 1)', 'rgba(54, 162, 235, 1', 'rgba(255, 99, 132, 1)'];
+//     //var myBackColor = ['rgba(75, 192, 192, 0.2)', 'rgba(54, 162, 235, 0.2', 'rgba(255, 99, 132, 0.2)'];
+//     var idx = 0;
+//     @foreach(var item in Model.PerMinutesModelList)
+//     {
+//         @:var dataAmtList = [];
+//         @:var dataCntList = [];
+//         @:lableList = [];
+//         foreach (var dataInput in item.PerMinutes)
+//         {
+//             dataInput.AMOUNT = (dataInput.AMOUNT==null)?"0":Math.Round(double.Parse(dataInput.AMOUNT) / 1000).ToString();
+//             @:dataAmtList.push("@dataInput.AMOUNT");
+//             @:dataCntList.push("@dataInput.APPROVAL_CNT");
+//             @:lableList.push("@dataInput.GUBUN.Split(' ')[1]");
+//         }
+
+//         @:minutesDataset.push({
+//         @:    label: "@item.PerMinutes[0].GUBUN.Split(' ')[0]"
+//         @:    , data: dataAmtList
+//         @:    , fill: false
+//         @:    , linetension: 1
+//         @:    , backgroundColor: myBackColor[idx]
+//         @:    , borderColor: myBorderColor[idx]
+//         @:    , borderWidth: 1
+//         @:});
+
+//         @:minutesCntDataset.push({
+//         @:    label: "@item.PerMinutes[0].GUBUN.Split(' ')[0]"
+//         @:    , data: dataCntList
+//         @:    , fill: false
+//         @:    , linetension: 0.1
+//         @:    , backgroundColor: myBackColor[idx]
+//         @:    , borderColor: myBorderColor[idx]
+//         @:    , bordercapstyle: 'butt'
+//         @:    , borderjoinstyle: 'miter'
+//         @:    , pointbordercolor: myBorderColor[idx]
+//         @:    , borderWidth: 1
+//         @:});
+//         @:idx++;
+//     }
+//     console.log(minutesDataset);
+
+//     console.log("returnModel: " + returnModel);
 </script>

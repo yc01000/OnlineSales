@@ -10,14 +10,8 @@ export default {
     props: {
         sumdata: Object
     },
-    filters: {
-        comma(val) {
-            return String(val).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-        }
-    },
     data: function() {
         return {
-            CommaValue : ''
         }
     },
     mounted() {
@@ -27,9 +21,6 @@ export default {
         //this.createChart()
     },
     methods: {
-        setComma : function(val) {
-            return String(val).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-        },
         createChart : function() {
             //console.log("sumData > ", this.sumdata);
             var myDataset = [];
@@ -95,7 +86,7 @@ export default {
                 },
                 title: {
                     display: true,
-                    text: '판매 현황',
+                    text: '',
                     position: 'top',
                     fontSize: 15,
                     fontStyle: 'bold'
