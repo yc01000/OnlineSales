@@ -1,24 +1,46 @@
 <template>
   <div>
-    <b-navbar toggleable="lg" type="light" variant="secondary">
-      <b-navbar-brand href="#"><img src="@/assets/top_logo.gif" width="150" height="30" class="d-inline-block align-top"
+<!--     
+    <b-navbar type="light" variant="secondary">
+      <b-navbar-brand href="/"><img src="@/assets/top_logo.gif" width="150" height="30" class="d-inline-block align-top"
           alt="Kitten">
         진마켓 판매실적
       </b-navbar-brand>
-      <Datepicker v-model="date" multiDates :format="format" />
-      <h3>~</h3>
-      <Datepicker v-model="time" timePicker modeHeight="120">
-        <!-- <template #dp-input="{ value, }">
-          <input type="text" :value="value" />
-        </template> -->
-      </Datepicker>
-      <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
+      <div class="picker1">
+        <Datepicker v-model="date" multiDates :format="format" />
+      </div>
+      ~
+      <div class="picker2">
+        <Datepicker v-model="time" timePicker modeHeight="120" />
+      </div>
 
       <b-nav-form>
-        <!-- <b-form-input size="sm" class="mr-sm-2" placeholder="Search"></b-form-input> -->
         <b-button @click='clickParams' variant="danger" size="sm" class="my-2 my-sm-0">{{ msg }}</b-button>
       </b-nav-form>
     </b-navbar>
+-->
+
+
+    <b-container fluid="md" class="bv-example-row" variant="secondary">
+      <b-row align-h="start" cols="6">
+        <b-col>
+          <img src="@/assets/top_logo.gif" width="150" height="30" class="d-inline-block align-top" alt="Kitten">
+        </b-col>
+        <b-col align-h="start">
+          진마켓 판매실적
+        </b-col>
+        <b-col>
+            <Datepicker class="picker1" v-model="date" multiDates :format="format" />
+        </b-col>
+        <b-col></b-col>
+        <b-col>
+          <Datepicker class="picker2" v-model="time" timePicker modeHeight="120" />
+        </b-col>
+        <b-col>
+          <b-button @click='clickParams' variant="danger" size="sm" class="my-2 my-sm-0">{{ msg }}</b-button>
+        </b-col>
+      </b-row>
+    </b-container>
   </div>
 </template>
 
@@ -27,18 +49,15 @@ import axios from 'axios'
 import Datepicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 import { ref } from 'vue';
-// import { stringify } from 'querystring';
 
 export default {
   props: {
     msg: String
   },
   components: { Datepicker },
-  data: function () {
-    return {
+  data: () => ({
 
-    }
-  },
+  }),
   setup() {
     const date = ref();
     const time = ref({
@@ -49,17 +68,13 @@ export default {
       var dataset = [];
       var strTime = '';
       date.forEach(el => {
-        dataset.push(el.getFullYear() + '.' + (el.getMonth() + 1) + '.' + el.getDate());
-        strTime =  el.getHours() + ':' + el.getMinutes();
+        dataset.push(el.getFullYear() + '.'
+          + (el.getMonth() + 1).toString().padStart(2, '0') + '.'
+          + el.getDate().toString().padStart(2, '0'));
+        strTime = el.getHours().toString().padStart(2, '0') + ':'
+          + el.getMinutes().toString().padStart(2, '0');
       });
-      console.log('stringify', JSON.stringify(dataset));
-      return `${JSON.stringify(dataset)} ${strTime}` ;
-      // const day = date[1].getDate();
-      // const month = date[1].getMonth() + 1;
-      // const year = date[1].getFullYear();
-      // console.log('1time: ' ,date[0].getHours(), date[0].getMinutes());
-
-      // return `Selected ${year}.${month}.${day}`;
+      return `${JSON.stringify(dataset)} ${strTime}`;
     };
     return {
       date,
@@ -69,9 +84,24 @@ export default {
 
   },
   methods: {
-
     clickParams: async function () {
-      console.log("this.date ", this.date);
+      var fromDate1, fromDate2, fromDate3, fromTime = '';
+      var toDate1, toDate2, toDate3, toTime;
+      fromDate1 = toDate1 = this.date[0].getFullYear()
+        + (this.date[0].getMonth() + 1).toString().padStart(2, '0')
+        + this.date[0].getDate().toString().padStart(2, '0');
+      fromDate2 = toDate2 = this.date[1].getFullYear()
+        + (this.date[1].getMonth() + 1).toString().padStart(2, '0')
+        + this.date[1].getDate().toString().padStart(2, '0');
+      fromDate3 = toDate3 = this.date[2].getFullYear()
+        + (this.date[2].getMonth() + 1).toString().padStart(2, '0')
+        + this.date[2].getDate().toString().padStart(2, '0');
+      fromTime = this.date[0].getHours().toString().padStart(2, '0')
+        + this.date[0].getMinutes().toString().padStart(2, '0');
+      toTime = this.time.hours.toString().padStart(2, '0')
+        + this.time.minutes.toString().padStart(2, '0');
+      console.log("date>", `${fromDate1}, ${fromDate2}, ${fromDate3}, ${fromTime}, ${toTime}`);
+
       var resdata;
       var per_resdata;
       await axios.get('server/get_chart_data2.jsp').then((response) => {
@@ -91,8 +121,7 @@ export default {
           per_jsondata: per_resdata
         },
       });
-      // var lstdate[] = this.date.
-      console.log("date>", this.date)
+
     }
   },
   mounted() {
@@ -124,8 +153,18 @@ a {
 </style>
 
 <style>
-.dp__input_wrap {
+/* .dp__input_wrap {
     width: 380px;
     height: 38px;
+} */
+.picker1 {
+  width: 400px;
+  height: 38px;
+  margin-right: 20px;
+}
+
+.picker2 {
+  width: 120px;
+  height: 38px;
 }
 </style>
